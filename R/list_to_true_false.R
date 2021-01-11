@@ -116,3 +116,23 @@ collapse_multi_column_dummy <- function(data_frame, columns_to_collapse){
 }
 
 
+
+#' Co-occurence matrix
+#'
+#' A useful function for calculated the co-occurences of dummy variables
+#'
+#' @param TRUE_FALSE_DATAFRAME
+#'
+#' @return
+#' @export
+#'
+#' @examples
+co_occurence_matrix <- function(TRUE_FALSE_DATAFRAME) {
+  co_occurence <- TRUE_FALSE_DATAFRAME %>%
+    as.matrix() %>%
+    crossprod()
+  return (co_occurence)
+
+}
+
+
