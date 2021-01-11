@@ -75,3 +75,44 @@ List_to_True_False<- function(x, seperator)
   return(df_to_return)
 }
 
+#' Collapse dummy variables
+#'
+#' Reverse of List_to_True_False
+#'
+#' @param data_frame
+#' @param columns_to_collapse
+#'
+#' @return
+#' @export
+#'
+#' @examples
+collapse_multi_column_dummy <- function(data_frame, columns_to_collapse){
+
+  data <- data_frame[,columns_to_collapse]
+
+  list_to_return <- c()
+  iterator <- 1
+
+  for (column in colnames(data)){
+
+    data[data[,column]==T,column] <- colnames(data)[which(colnames(data)==column)]
+    data[data[,column]==F,column] <- "unique_value_to_remove"
+    if (iterator==1){
+      list_to_return<-data[,column]
+    }
+    if (iterator>1) {
+      list_to_return<- paste(list_to_return,data[,column], sep = ", ")
+    }
+    iterator <- iterator +1
+
+  }
+  list_to_return <- gsub("unique_value_to_remove, ","", list_to_return)
+  list_to_return <- gsub(", unique_value_to_remove","", list_to_return)
+  list_to_return <- gsub("unique_value_to_remove",NA, list_to_return)
+
+  list_to_return<-trimws(list_to_return)
+
+  return(list_to_return)
+}
+
+
