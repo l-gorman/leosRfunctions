@@ -16,7 +16,7 @@ presenting_info_for_table <- function(column, seperator, percentage_cut_off){
   # seperator <- ";"
   # percentage_cut_off <- 10
 
-  df <- List_to_True_False(data$data_type, seperator = seperator)
+  df <- List_to_True_False(column, seperator = seperator)
   counts <- colSums(df)
   percentage_occurence <- round(counts*100/nrow(df))
   percentage_occurence <- percentage_occurence[order(percentage_occurence, decreasing = T)]
