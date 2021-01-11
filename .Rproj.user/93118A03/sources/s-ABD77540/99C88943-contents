@@ -1,0 +1,13 @@
+Package: leosRfunctions
+Type: Package
+Title: Functions for thing Leo has to do a lot
+Version: 0.1.0
+Author: Leo Gorman
+Maintainer: The package maintainer <leogorman123@gmail.com>
+Description: A series of functions for generic tasks I have to carry out a lot.
+    For any things you woul like me to include, please open a discussion and include as much detail as possible for the task!
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports: dplyr, tidyverse, readr
+

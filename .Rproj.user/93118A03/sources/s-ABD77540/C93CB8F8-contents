@@ -1,0 +1,182 @@
+
+library(ggplot2)
+library(viridis)
+#library(devtools)
+#library(roxygen2)
+library(dplyr)
+library(tidyverse)
+library(reshape2)
+
+
+# Functions ---------------------------------------------------------------
+
+plot_heatmap <- function(co_occurence_matrix, title, x_label="", y_label="", fill_label) {
+
+  return(ggplot(melt(co_occurence_matrix), aes(x=Var1, y=Var2, fill=value))+
+           geom_tile()+
+           scale_fill_viridis(discrete=FALSE) + # trans="log"
+           labs(x=x_label, y=y_label, title=title, fill=fill_label)+
+           theme(plot.title = element_text(hjust=0.5),
+                 axis.text.x =  element_text(hjust=1, vjust=0.5, angle=90) ))
+  
+}
+
+co_occurence_matrix <- function(TRUE_FALSE_DATAFRAME) {
+  co_occurence <- TRUE_FALSE_DATAFRAME %>% 
+    as.matrix() %>% 
+    crossprod()
+  return (co_occurence)
+  
+}
+
+#' List must be written in form:
+#' temp <- c("a"=10,"c"=20)
+#' Where "a" and "c" are the original values 
+replace_multiple_values <-function(original_list,conversion_list) {
+
+    for (old_name in names(conversion_list))
+    {
+    if (sum(grepl(old_name,original_list, fixed = T))>0)
+    {
+        original_list <- gsub(old_name,unname(conversion_list[[old_name]]), original_list, fixed=T)
+    }
+    }
+
+  return (original_list)
+}
+
+replace_multiple_values_exact <-function(original_list,conversion_list) {
+  
+  for (old_name in names(conversion_list))
+  {
+    if (sum(grepl(old_name,original_list, fixed = T))>0)
+    {
+      original_list <- gsub(paste0("\\b",old_name,"\\b"),unname(conversion_list[[old_name]]), original_list)
+    }
+  }
+  
+  return (original_list)
+}
+
+
+# temp_conv <- c("(525);"="number_one_worked", "asdf;"="number_2_worked")
+# temp_column_name <-c("(525);edgfghgj;535rbnjhwj3wikr", "asdf;", ";asdf", "tgb")
+# 
+# grepl(names(temp_conv[1]), temp_column_name[1], fixed=T)
+# 
+# replace_multiple_values(temp_column_name,temp_conv)
+
+# True False function -----------------------------------------------------
+
+#This is a function to convert certain data from the format in the mother data set, to the format in the old data set.
+#This means that old R scripts can be used to analyse these pieces of data
+#For example, in th old format data appeared in the format
+
+# Input df
+#     Months          
+# 1   jan, mar ...                 
+# 2   feb, mar ...         
+# 3   mar ...
+
+
+# Ouput df
+#     jan           feb         mar         ...
+# 1   TRUE          FALSE       TRUE        ...
+# 2   FALSE         TRUE        TRUE        ...
+# 3   FALSE         FALSE       TRUE        ...
+
+
+
+
+#wild_food_true_false<- List_to_True_False(dat_all$wildfood_collect_when, seperator=", ")
+
+
+#---------------------------------------------------------------------------------------------------------------------#
+library(tidyr)
+
+create_named_nested_list<- function(longer_list, shorter_list)
+{
+  temp_list<- longer_list %in% shorter_list
+  names(temp_list)<- longer_list
+  return(temp_list)
+}
+
+List_to_True_False<- function(x, seperator)
+  
+{
+  
+  x[is.na(x)]<-"NA" 
+  x <- tolower(x)
+  #x <- gsub("[[:punct:]]", " ", x)
+  
+  
+  split <- strsplit(x,seperator,  fixed=T )
+  
+  # Checking whether the unique values are in the sublists of the nested list
+  all_potential_value <- unique(unlist(strsplit(x,seperator, fixed=T )))
+  
+  
+  
+  boolean_nested_list<- lapply(split, function (x) create_named_nested_list(longer_list=all_potential_value,
+                                                                            shorter_list=x))
+  
+  df_to_return <- data.frame(do.call(rbind, boolean_nested_list))
+  return(df_to_return)
+}
+
+
+collapse_multi_column_dummy <- function(data_frame, columns_to_collapse){
+  
+  data <- data_frame[,columns_to_collapse]
+  
+  list_to_return <- c()
+  iterator <- 1
+  
+  for (column in colnames(data)){
+    
+    data[data[,column]==T,column] <- colnames(data)[which(colnames(data)==column)]
+    data[data[,column]==F,column] <- "unique_value_to_remove"
+    if (iterator==1){
+      list_to_return<-data[,column]
+    }
+    if (iterator>1) {
+      list_to_return<- paste(list_to_return,data[,column], sep = ", ") 
+    }
+    iterator <- iterator +1
+    
+  }
+  list_to_return <- gsub("unique_value_to_remove, ","", list_to_return)
+  list_to_return <- gsub(", unique_value_to_remove","", list_to_return)
+  list_to_return <- gsub("unique_value_to_remove",NA, list_to_return)
+  
+  list_to_return<-trimws(list_to_return)
+  
+  return(list_to_return)
+}
+
+
+# Markdown functions ------------------------------------------------------
+
+firstup <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  return(x)
+}
+
+modify_flextable <- function(my_dataframe){
+  std_border =fp_border(color="grey", width = 1)
+  
+  colnames(my_dataframe) <- tolower(colnames(my_dataframe))
+  colnames(my_dataframe) <- firstup(colnames(my_dataframe))
+
+    my_flextable <- flextable(my_dataframe) %>% 
+    bold(part = "header") %>%  # bold header
+    theme_zebra() %>% 
+    vline( border=std_border) %>% 
+    align(align = "center", part = "all") %>% 
+    #padding(padding.left = 40, padding.right = 40) %>% 
+    hline(border=std_border, part = "footer") %>% 
+    autofit()
+  return(my_flextable)
+}
+
+
