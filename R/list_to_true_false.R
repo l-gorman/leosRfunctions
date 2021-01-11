@@ -72,9 +72,23 @@ create_named_nested_list<- function(longer_list, shorter_list)
 #' @examples
 List_to_True_False<- function(x, seperator)
 {
+
+  # x <- c("Structured survey;Qualitative",
+  # "Structured survey;Semi-structured survey",
+  # "Structured survey;Aggregated statistics;Climate Model",
+  # "Structured survey;Qualitative",
+  # "Structured survey;Qualitative",
+  # "Structured survey;Remote sensing",
+  # "Structured survey",
+  # "Structured survey;Aggregated statistics",
+  # "Structured survey;Remote sensing;Aggregated statistics",
+  # "Structured survey;Aggregated statistics")
+  # seperator <- ";"
+
   x[is.na(x)]<-"NA"
   x <- tolower(x)
   #x <- gsub("[[:punct:]]", " ", x)
+
 
 
   split <- strsplit(x,seperator,  fixed=T )
