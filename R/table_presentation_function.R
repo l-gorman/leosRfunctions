@@ -25,6 +25,8 @@ presenting_info_for_table <- function(column, seperator, percentage_cut_off){
   percentage_occurence["other"] <- sum(other_values)
 
   string_to_return <- paste0(names(percentage_occurence)," (", percentage_occurence,"%)")
+  string_to_return <- paste0(string_to_return, collapse=", ")
+
 
   return(string_to_return)
 }
