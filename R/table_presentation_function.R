@@ -21,7 +21,7 @@ presenting_info_for_table <- function(column, seperator, percentage_cut_off){
   percentage_occurence <- round(counts*100/nrow(df))
   percentage_occurence <- percentage_occurence[order(percentage_occurence, decreasing = T)]
   other_values <- percentage_occurence[percentage_occurence<percentage_cut_off]
-  percentage_occurence <- percentage_occurence[percentage_occurence>percentage_cut_off]
+  percentage_occurence <- percentage_occurence[percentage_occurence>=percentage_cut_off]
   percentage_occurence["other"] <- sum(other_values)
 
   string_to_return <- paste0(names(percentage_occurence)," (", percentage_occurence,"%)")
