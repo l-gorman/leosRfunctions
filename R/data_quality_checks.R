@@ -125,8 +125,24 @@ summarise_indicator_sheet <- function(indicator_sheet){
     gather() %>%
     rename(upper_quartile=value)%>%
     select(-key)
-  return(bind_cols(id=id,class, na_values,zero_values,outliers, means,standard_deviation,lower_quartile, upper_quartile))
+
+  min <- indicator_sheet %>%
+    summarise_all(min, na.rm = T) %>%
+    gather() %>%
+    rename(min=value) %>%
+    select(-key)
+
+  max <- indicator_sheet %>%
+    summarise_all(max, na.rm = T) %>%
+    gather() %>%
+    rename(max=value) %>%
+    select(-key)
+
+  return(bind_cols(id=id,class, na_values,zero_values,outliers, means,standard_deviation,lower_quartile, upper_quartile, min, max))
 }
+
+
+
 
 
 

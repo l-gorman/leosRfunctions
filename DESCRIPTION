@@ -9,5 +9,5 @@ Description: A series of functions for generic tasks I have to carry out a lot.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: dplyr, tidyverse, readr
+Imports: dplyr, tidyverse, readr, magrittr
 RoxygenNote: 7.1.1
