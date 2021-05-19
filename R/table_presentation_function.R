@@ -12,17 +12,21 @@
 #'
 #' @examples
 presenting_info_for_table <- function(column, seperator, percentage_cut_off){
-  # column <- data$data_type
-  # seperator <- ";"
-  # percentage_cut_off <- 10
+   # column <- data$data_type
+   # seperator <- ";"
+   # percentage_cut_off <- 10
+
 
   df <- List_to_True_False(column, seperator = seperator)
   counts <- colSums(df)
   percentage_occurence <- round(counts*100/nrow(df))
   percentage_occurence <- percentage_occurence[order(percentage_occurence, decreasing = T)]
   other_values <- percentage_occurence[percentage_occurence<percentage_cut_off]
+  df$other <- rowSums(df[other_values],na.rm=T)>0
   percentage_occurence <- percentage_occurence[percentage_occurence>=percentage_cut_off]
-  percentage_occurence["other"] <- sum(other_values)
+
+  other_percentage <-round(sum(df$other,na.rm = T)*100/nrow(df))
+  percentage_occurence["other"] <- other_percentage
 
   string_to_return <- paste0(names(percentage_occurence)," (", percentage_occurence,"%)")
   string_to_return <- paste0(string_to_return, collapse=", ")
